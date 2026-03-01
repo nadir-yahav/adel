@@ -526,37 +526,35 @@
     ];
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xc8daf0);
-    scene.fog = new THREE.Fog(0xc8daf0, 30, 260);
+    scene.background = new THREE.Color(0xaed6f1);
+    scene.fog = new THREE.Fog(0xaed6f1, 40, 280);
 
     const camera = new THREE.PerspectiveCamera(78, window.innerWidth / window.innerHeight, 0.1, 500);
 
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: false });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.55;
+    renderer.setPixelRatio(1);
+    renderer.shadowMap.enabled = false;
+    renderer.toneMapping = THREE.LinearToneMapping;
+    renderer.toneMappingExposure = 1.0;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
 
-    const hemi = new THREE.HemisphereLight(0xddeeff, 0x334422, 1.8);
+    const hemi = new THREE.HemisphereLight(0xffffff, 0x446644, 2.6);
     scene.add(hemi);
 
-    const sun = new THREE.DirectionalLight(0xfff5d0, 2.2);
+    const sun = new THREE.DirectionalLight(0xfff5d0, 3.0);
     sun.position.set(30, 70, 20);
-    sun.castShadow = true;
-    sun.shadow.mapSize.set(512, 512);
+    sun.castShadow = false;
     scene.add(sun);
 
-    const ambient = new THREE.AmbientLight(0xcce8ff, 0.85);
+    const ambient = new THREE.AmbientLight(0xffffff, 1.2);
     scene.add(ambient);
 
-    const fillLight = new THREE.DirectionalLight(0xffeedd, 0.9);
+    const fillLight = new THREE.DirectionalLight(0xffeedd, 1.2);
     fillLight.position.set(-20, 30, -30);
     scene.add(fillLight);
 
-    const groundGeo = new THREE.PlaneGeometry(280, 280, 64, 64);
+    const groundGeo = new THREE.PlaneGeometry(280, 280);
     groundGeo.rotateX(-Math.PI / 2);
     const ground = new THREE.Mesh(
       groundGeo,
@@ -702,9 +700,8 @@
           head.position.set(px, 6.25, pz);
           scene.add(head);
 
-          const light = new THREE.PointLight(0xffe8b0, 0.58, 22, 2);
-          light.position.set(px, 6.1, pz);
-          scene.add(light);
+          // No dynamic PointLights — global lights are sufficient and PointLights are expensive
+
         }
       }
 
@@ -731,22 +728,17 @@
           const bz = cz + random(-4, 4);
 
           const buildingMat = isTower
-            ? new THREE.MeshPhysicalMaterial({
-              color: random(0, 1) > 0.5 ? 0xa5c7e8 : 0x93bde6,
-              roughness: 0.14,
-              metalness: 0.05,
-              transparent: true,
-              opacity: 0.9,
-              transmission: 0.2,
-              thickness: 0.8,
-              reflectivity: 0.9,
-              clearcoat: 1,
-              clearcoatRoughness: 0.14
+            ? new THREE.MeshStandardMaterial({
+              color: random(0, 1) > 0.5 ? 0x7ec8e3 : 0x5ba4cf,
+              roughness: 0.3,
+              metalness: 0.4,
+              emissive: 0x1a3a5c,
+              emissiveIntensity: 0.18
             })
             : new THREE.MeshStandardMaterial({
-              color: random(0, 1) > 0.5 ? 0x4b5563 : 0x374151,
-              roughness: 0.82,
-              metalness: 0.1
+              color: random(0, 1) > 0.5 ? 0x6b7280 : 0x4b5563,
+              roughness: 0.85,
+              metalness: 0.05
             });
 
           const building = new THREE.Mesh(
@@ -754,55 +746,19 @@
             buildingMat
           );
           building.position.set(bx, h / 2, bz);
-          building.castShadow = true;
-          building.receiveShadow = true;
+          building.castShadow = false;
+          building.receiveShadow = false;
           scene.add(building);
           world.obstacles.push({ mesh: building, radius: Math.max(w, d) * 0.5 + 1.5 });
 
-          const windowMat = new THREE.MeshStandardMaterial({
-            color: isTower ? 0xbfdbfe : 0xfef08a,
-            emissive: isTower ? 0x1e3a8a : 0x5a4316,
-            emissiveIntensity: isTower ? 0.95 : 0.75,
-            roughness: isTower ? 0.2 : 0.5,
-            metalness: isTower ? 0.52 : 0.08
-          });
-          const floors = Math.floor(h / 3);
-          for (let floor = 1; floor <= floors; floor++) {
-            const win1 = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.42, 0.06), windowMat);
-            win1.position.set(bx + w * 0.5 + 0.03, floor * 2.6, bz);
-            scene.add(win1);
-
-            const win2 = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.42, 0.06), windowMat);
-            win2.position.set(bx - w * 0.5 - 0.03, floor * 2.6, bz);
-            scene.add(win2);
-
-            if (isTower && floor % 2 === 0) {
-              const win3 = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.42, 0.45), windowMat);
-              win3.position.set(bx, floor * 2.6, bz + d * 0.5 + 0.03);
-              scene.add(win3);
-
-              const win4 = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.42, 0.45), windowMat);
-              win4.position.set(bx, floor * 2.6, bz - d * 0.5 - 0.03);
-              scene.add(win4);
-            }
-          }
-
+          // Skip per-floor window meshes for performance; emissive on material gives glow effect
           if (isTower) {
             const crown = new THREE.Mesh(
               new THREE.BoxGeometry(w * 0.84, random(1.8, 3.8), d * 0.84),
               new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.62, roughness: 0.28 })
             );
             crown.position.set(bx, h + crown.geometry.parameters.height * 0.5, bz);
-            crown.castShadow = true;
             scene.add(crown);
-
-            const antenna = new THREE.Mesh(
-              new THREE.CylinderGeometry(0.05, 0.05, random(4, 8), 8),
-              new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.8, roughness: 0.24 })
-            );
-            antenna.position.set(bx, h + 3.8, bz);
-            antenna.castShadow = true;
-            scene.add(antenna);
           }
         }
       }
@@ -819,22 +775,17 @@
         const th = random(86, 138);
         const tower = new THREE.Mesh(
           new THREE.BoxGeometry(tw, th, td),
-          new THREE.MeshPhysicalMaterial({
-            color: 0xa8cbef,
-            roughness: 0.12,
-            metalness: 0.04,
-            transparent: true,
-            opacity: 0.92,
-            transmission: 0.16,
-            thickness: 1.1,
-            reflectivity: 0.95,
-            clearcoat: 1,
-            clearcoatRoughness: 0.12
+          new THREE.MeshStandardMaterial({
+            color: 0x5ba4cf,
+            roughness: 0.25,
+            metalness: 0.45,
+            emissive: 0x1a3a5c,
+            emissiveIntensity: 0.2
           })
         );
         tower.position.set(tx, th / 2, tz);
-        tower.castShadow = true;
-        tower.receiveShadow = true;
+        tower.castShadow = false;
+        tower.receiveShadow = false;
         scene.add(tower);
         world.obstacles.push({ mesh: tower, radius: Math.max(tw, td) * 0.5 + 1.5 });
       }
