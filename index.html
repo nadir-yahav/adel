@@ -2049,7 +2049,7 @@
       gamepadState.id = pad.id || 'Gamepad';
       ui.pad.textContent = `שלט: מחובר`;
 
-      const deadzone = 0.12;
+      const deadzone = 0.22;
       const axis = (index) => {
         const value = pad.axes[index] || 0;
         return Math.abs(value) > deadzone ? value : 0;
@@ -2064,8 +2064,10 @@
 
       const rightY = axis(3) || axis(5);
 
-      gamepadState.moveX = clamp(axis(0) + dpadX, -1, 1);
-      gamepadState.moveZ = clamp(-(axis(1) + dpadZ), -1, 1);
+      const combinedMoveX = axis(0) + dpadX;
+      const combinedMoveZ = -(axis(1) + dpadZ);
+      gamepadState.moveX = Math.abs(combinedMoveX) > 0.18 ? clamp(combinedMoveX, -1, 1) : 0;
+      gamepadState.moveZ = Math.abs(combinedMoveZ) > 0.18 ? clamp(combinedMoveZ, -1, 1) : 0;
       gamepadState.lookX = axis(2);
       gamepadState.lookY = rightY;
 
@@ -2093,7 +2095,11 @@
         - ((keyState.has('a') || keyState.has('arrowleft') || codeState.has('KeyA') || codeState.has('ArrowLeft')) ? 1 : 0);
       const keyboardMoveZ = ((keyState.has('w') || keyState.has('arrowup') || codeState.has('KeyW') || codeState.has('ArrowUp')) ? 1 : 0)
         - ((keyState.has('s') || keyState.has('arrowdown') || codeState.has('KeyS') || codeState.has('ArrowDown')) ? 1 : 0);
-      const keyboardActive = Math.abs(keyboardMoveX) > 0 || Math.abs(keyboardMoveZ) > 0;
+      const keyboardActive =
+        Math.abs(keyboardMoveX) > 0 ||
+        Math.abs(keyboardMoveZ) > 0 ||
+        codeState.has('ArrowUp') || codeState.has('ArrowDown') || codeState.has('ArrowLeft') || codeState.has('ArrowRight') ||
+        codeState.has('KeyW') || codeState.has('KeyA') || codeState.has('KeyS') || codeState.has('KeyD');
       const moveX = keyboardActive ? keyboardMoveX : clamp(keyboardMoveX + gamepadState.moveX, -1, 1);
       const moveZ = keyboardActive ? keyboardMoveZ : clamp(keyboardMoveZ + gamepadState.moveZ, -1, 1);
 
@@ -2143,10 +2149,10 @@
 
       const isMoving = Math.hypot(moveX, moveZ) > 0.05;
       const aimYaw = yaw + Math.PI;
-      playerModel.group.rotation.y = THREE.MathUtils.lerp(playerModel.group.rotation.y, aimYaw, isMoving ? 0.16 : 0.12);
+      playerModel.group.rotation.y = THREE.MathUtils.lerp(playerModel.group.rotation.y, aimYaw, 0.12);
       if (isMoving) {
         const targetYaw = Math.atan2(worldMoveX, worldMoveZ);
-        playerModel.group.rotation.y = THREE.MathUtils.lerp(playerModel.group.rotation.y, (targetYaw + aimYaw) * 0.5, 0.12);
+        playerModel.group.rotation.y = THREE.MathUtils.lerp(playerModel.group.rotation.y, targetYaw + Math.PI, 0.22);
       }
 
       updatePlayerAnimation(isMoving, delta);
