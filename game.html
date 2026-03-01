@@ -2094,14 +2094,14 @@
       const nx = moveX / moveLen;
       const nz = moveZ / moveLen;
 
-      // Use yaw directly — no camera.getWorldDirection() drift
-      const forwardX = -Math.sin(yaw);
-      const forwardZ = -Math.cos(yaw);
-      const rightX = Math.cos(yaw);
-      const rightZ = -Math.sin(yaw);
+      // Transform input from camera-local space to world space via camera quaternion.
+      // In camera space: right=+X, forward=-Z. W(nz=+1) → local(0,0,-1) → world forward.
+      tmpCameraForward.set(nx, 0, -nz).applyQuaternion(camera.quaternion);
+      tmpCameraForward.y = 0;
+      if (tmpCameraForward.lengthSq() > 0.0001) tmpCameraForward.normalize();
 
-      const worldMoveX = rightX * nx + forwardX * nz;
-      const worldMoveZ = rightZ * nx + forwardZ * nz;
+      const worldMoveX = tmpCameraForward.x;
+      const worldMoveZ = tmpCameraForward.z;
 
       const nextX = player.position.x + worldMoveX * speed * delta;
       const nextZ = player.position.z + worldMoveZ * speed * delta;
