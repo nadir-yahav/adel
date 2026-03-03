@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>פילאטיס לדתיות - אתגר 30 ימים</title>
+  <meta name="theme-color" content="#6b4fd3" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app">
+    <header class="hero">
+      <h1 id="heroTitle">פילאטיס לדתיות - אתגר 30 ימים</h1>
+      <p id="heroSubtitle">
+        תוכנית יומית עדינה ונוחה לבית: בכל יום אימון שמכוון לשריפת כ-100 קלוריות
+        ולחיזוק כל שרירי הגוף.
+      </p>
+      <p id="heroNote" class="note">
+        מותאם לאימון צנוע בבית, ללא ציוד מיוחד. מומלץ להתייעץ עם גורם רפואי לפני התחלה.
+      </p>
+    </header>
+
+    <section class="controls" aria-label="בקרות תוכנית">
+      <label id="languageLabel" for="languagePicker">שפה:</label>
+      <select id="languagePicker">
+        <option value="he">עברית</option>
+        <option value="en">English</option>
+      </select>
+      <label id="dayPickerLabel" for="dayPicker">בחרי יום:</label>
+      <select id="dayPicker"></select>
+      <button id="showTodayBtn" type="button">היום שלי</button>
+      <button id="markDoneBtn" type="button">סימנתי שביצעתי</button>
+    </section>
+
+    <section class="controls" aria-label="התקנה ותזכורת">
+      <button id="installBtn" type="button" hidden>התקנת האפליקציה</button>
+      <label id="reminderLabel" for="reminderTime">תזכורת יומית בשעה:</label>
+      <input id="reminderTime" type="time" />
+      <button id="saveReminderBtn" type="button">שמירת תזכורת</button>
+      <button id="testReminderBtn" type="button">בדיקת תזכורת עכשיו</button>
+      <span id="reminderStatus" class="note"></span>
+    </section>
+
+    <section class="progress" aria-label="התקדמות">
+      <div class="progress-head">
+        <h2 id="progressTitle">התקדמות חודשית</h2>
+        <span id="progressText">0/30 ימים</span>
+      </div>
+      <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="30" aria-valuenow="0" id="progressBar">
+        <div id="progressFill"></div>
+      </div>
+    </section>
+
+    <section id="dayCard" class="day-card" aria-live="polite"></section>
+
+    <section class="day-card" aria-live="polite">
+      <h2 id="coachTitle">וידאו הדגמה עם מאמנת</h2>
+      <p id="coachNote" class="note">זה הסרטון האישי שלך עם אפקט אנימה, אווירת סטודיו, מוזיקת רקע וטיימר.</p>
+      <div class="coach-wrap">
+        <div class="coach-video-shell">
+          <div class="studio-glow" aria-hidden="true"></div>
+          <video id="coachVideoLocal" class="coach-video anime-look" controls playsinline preload="metadata">
+            <source src="media/coach-self.mp4" type="video/mp4" />
+          </video>
+        </div>
+        <div class="coach-info">
+          <p id="coachStepText">שלב הדגמה יופיע כאן</p>
+          <p id="videoTimer" class="video-timer">00:00 / 00:00 • נשאר 00:00</p>
+          <div class="controls">
+            <button id="coachStartBtn" type="button">התחלת הדגמה</button>
+            <button id="coachNextBtn" type="button">שלב הבא</button>
+            <button id="musicToggleBtn" type="button">הפעלת מוזיקה</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="all-days" aria-label="כל הימים">
+      <h2 id="allDaysTitle">כל תוכנית 30 הימים</h2>
+      <div id="daysGrid" class="days-grid"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

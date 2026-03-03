@@ -1,0 +1,25 @@
+{
+  "name": "פילאטיס לדתיות - אתגר 30 ימים",
+  "short_name": "פילאטיס 30",
+  "lang": "he",
+  "dir": "rtl",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f7f7fb",
+  "theme_color": "#6b4fd3",
+  "description": "אפליקציית פילאטיס צנועה לבית עם תוכנית של 30 ימים.",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

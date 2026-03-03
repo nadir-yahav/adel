@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>משחק זיכרון</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="memory.css" />
+</head>
+<body>
+  <section id="onboarding" class="onboarding" aria-label="First setup">
+    <div class="onboarding-card">
+      <h2 id="onboardingTitle">ברוכים הבאים למשחק הזיכרון</h2>
+      <p id="onboardingSubtitle">שלב 1: איך קוראים לכם?</p>
+
+      <div id="step1" class="onboarding-step active">
+        <label for="nameInput1" id="nameInput1Label">כתבו את השם שלכם:</label>
+        <input id="nameInput1" type="text" maxlength="24" autocomplete="name" placeholder="השם שלכם" />
+        <button id="nextToStep2Btn" type="button">המשך</button>
+      </div>
+
+      <div id="step2" class="onboarding-step">
+        <label for="ageInput" id="ageInputLabel">שלב 2: מה הגיל שלך?</label>
+        <input id="ageInput" type="number" min="11" max="1000" inputmode="numeric" placeholder="לדוגמה: 11" />
+        <button id="nextToStep3Btn" type="button">המשך</button>
+      </div>
+
+      <div id="step3" class="onboarding-step">
+        <label for="languageSelect" id="languageSelectLabel">בחרו שפה:</label>
+        <select id="languageSelect">
+          <option value="en" selected>English</option>
+          <option value="he">עברית</option>
+          <option value="ar">العربية</option>
+        </select>
+        <button id="startGameBtn" type="button">התחל משחק</button>
+      </div>
+
+      <p id="onboardingError" class="onboarding-error" aria-live="assertive"></p>
+    </div>
+  </section>
+
+  <main class="app">
+    <nav class="top-links" aria-label="קישורים">
+      <a class="index-link" href="../../index.html">לעמוד אינדקס</a>
+    </nav>
+
+    <section id="difficultyScreen" class="panel-screen hidden" aria-label="בחירת רמה">
+      <h1 id="titleText">🧩 משחק זיכרון</h1>
+      <p id="subtitleText">בחרו רמת קושי כדי להמשיך למסך השלבים.</p>
+      <div class="difficulty-options">
+        <button type="button" class="difficulty-btn" data-difficulty="easy" id="difficultyEasyBtn">קל</button>
+        <button type="button" class="difficulty-btn" data-difficulty="medium" id="difficultyMediumBtn">בינוני</button>
+        <button type="button" class="difficulty-btn" data-difficulty="hard" id="difficultyHardBtn">קשה</button>
+      </div>
+    </section>
+
+    <section id="levelsScreen" class="panel-screen hidden" aria-label="מסך שלבים">
+      <div class="levels-header-row">
+        <h2 id="levelsTitle">שלבים 1-1000</h2>
+        <div class="levels-actions">
+          <button id="currentModeChip" type="button" class="current-mode-chip">בינוני</button>
+          <button id="leaderboardBtn" type="button">שיאים</button>
+        </div>
+      </div>
+      <div id="modePicker" class="mode-picker hidden" aria-label="בחירת מצב">
+        <button type="button" class="mode-option" data-difficulty="easy" id="modeEasyBtn">קל</button>
+        <button type="button" class="mode-option" data-difficulty="medium" id="modeMediumBtn">בינוני</button>
+        <button type="button" class="mode-option" data-difficulty="hard" id="modeHardBtn">קשה</button>
+      </div>
+      <p id="levelsSubtitle">בחרו שלב. שלבים נעולים ייפתחו בהדרגה.</p>
+      <section id="leaderboardPanel" class="leaderboard-panel hidden" aria-label="טבלת שיאים">
+        <div class="leaderboard-head">
+          <h3 id="leaderboardTitle">טופ מסיימים</h3>
+          <button id="closeLeaderboardBtn" type="button">סגור</button>
+        </div>
+        <ol id="leaderboardList" class="leaderboard-list"></ol>
+      </section>
+      <div id="levelsGrid" class="levels-grid"></div>
+    </section>
+
+    <section id="playScreen" class="panel-screen hidden" aria-label="מסך משחק">
+      <header class="header">
+        <h2 id="playTitle">שלב 1</h2>
+        <p id="playMeta">קושי: קל</p>
+      </header>
+
+      <section class="controls" aria-label="בקרות משחק">
+        <button id="backToLevelsBtn" type="button">חזרה לשלבים</button>
+        <button id="restartLevelBtn" type="button">התחל שלב מחדש</button>
+      </section>
+
+      <section class="stats" aria-live="polite">
+        <div class="stat-box">
+          <span class="label" id="timerLabel">זמן</span>
+          <span id="timer">00:00</span>
+        </div>
+        <div class="stat-box">
+          <span class="label" id="movesLabel">מהלכים</span>
+          <span id="moves">0</span>
+        </div>
+        <div class="stat-box">
+          <span class="label" id="pairsLabel">זוגות</span>
+          <span id="pairs">0</span>
+        </div>
+        <div class="stat-box">
+          <span class="label" id="bestLabel">שיא אישי</span>
+          <span id="bestScore">--</span>
+        </div>
+      </section>
+
+      <section id="gameBoard" class="game-board" aria-label="לוח משחק"></section>
+
+      <section id="message" class="message" aria-live="assertive"></section>
+    </section>
+  </main>
+
+  <script src="memory.js"></script>
+</body>
+</html>
